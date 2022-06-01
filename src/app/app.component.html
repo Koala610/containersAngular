@@ -1,12 +1,6 @@
 <div #main class="builder" style="margin:auto">
   <div id="container-0" class="container">
     <button class="add-btn" id="add-btn-0" (mouseenter)="showButtons(0)" (click)="hideButtons()">Add</button>
-
-
-
-    
-
-
   </div>
   <div class="dropdown-menu disabled">
     <button class="sub-add-btn t-box" (click)="addElement('box')">Box</button>
@@ -285,3 +279,4 @@
 </div>
 
 <button (click)="toJSON()">To JSON</button>
+<textarea class="json-holder" [(ngModel)]="json_format"></textarea>

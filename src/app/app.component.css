@@ -25,6 +25,11 @@
 
 }
 
+.json-holder{
+    width: auto;
+    margin: auto;
+}
+
 .sub-add-btn.disabled{
     display: none;
 }
