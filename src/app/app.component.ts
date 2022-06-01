@@ -9,11 +9,11 @@ import { Box, Container } from '../models/models';
 
 export class AppComponent {
   title = 'Haha';
-  last_btn_id: number = 0;
+  last_btn_id: number = 1;
   last_box_id: number = 0;
   color_menu_is_shown: boolean = false;
   cur_box_id: number = 0;
-  storage: Container = new Container();
+  storage: Container = new Container(0);
   build_field: string = "";
   @ViewChild('main') mainDiv !: ElementRef;
 
@@ -27,10 +27,13 @@ export class AppComponent {
     let main = this.mainDiv.nativeElement;
     let init_container = main.querySelector('#container-0');
 
-    let parsedData = JSON.parse(this.build_field)
-    let main_el = this.renderer.createElement('div');
-    this.renderer.addClass(main_el, 'container');
-    main_el = this.buildFromData(parsedData, main_el);
+    let parsedData = JSON.parse(this.build_field);
+    let data = this.buildFromData(parsedData, this.storage);
+    let main_el = data[0];
+    this.storage = data[1];
+    //console.log(this.storage);
+    
+    
     this.renderer.removeChild(main, init_container);
     this.renderer.appendChild(main, main_el);
 
@@ -54,43 +57,56 @@ export class AppComponent {
   }
 
   toJSON() {
-    let storage = this.storage;
+    console.log(this.storage);
+    let storage = JSON.parse(JSON.stringify(this.storage));
     this.deleteIds(storage);
-    console.log(storage);
+    //console.log(this.storage);
+    
+    //console.log(JSON.stringify(storage));
 
   }
 
   getFormattedContainer(main_el: any, add_btn: any = this.createButton(this.last_btn_id)) {
     main_el.id = 'container-' + this.last_btn_id.toString();
-    this.last_btn_id++;
     this.renderer.appendChild(main_el, add_btn);
   }
 
-  buildFromData(node: any, main_el: any) {
+  buildFromData(node: any, storage:Container=new Container(this.last_btn_id)) {
     let add_btn = this.createButton(this.last_btn_id);
+    let main_el = this.renderer.createElement('div');
+    this.renderer.addClass(main_el, node.type);
     this.getFormattedContainer(main_el, add_btn);
     if (node.items.length === 0) {
-      let tmp = this.renderer.createElement('div');
-      this.renderer.addClass(tmp, node.type);
-      this.getFormattedContainer(tmp);
-      return tmp;
+      let tmp = new Container(this.last_btn_id);
+      this.last_btn_id++;
+      return [main_el, tmp];
     }
+    this.last_btn_id++;
     let el: any = null;
+    let new_node:Container|Box;
 
     node.items.forEach((item: any) => {
       if (item.type === 'container') {
-        el = this.renderer.createElement('div');
-        this.renderer.addClass(el, node.type);
-        el = this.buildFromData(item, el);
+        let data = this.buildFromData(item);
+        el = data[0];
+        
+        new_node = data[1];
       } else {
+        new_node = new Box(this.last_box_id);
+        
+        new_node.color = item.color;
         el = this.renderer.createElement('div');
-        this.renderer.addClass(el, item.type);
-        this.renderer.addClass(el, item.color);
+        el = this.getFormattedBox(this.last_box_id, el);
+        this.renderer.setStyle(el, 'background-color', item.color);
+        this.last_box_id++;
       }
+      
+      storage.items.push(new_node);
+      
       this.renderer.insertBefore(main_el, el, add_btn);
     });
 
-    return main_el;
+    return [main_el, storage];
   }
 
   showButtons(id: number) {
@@ -210,16 +226,18 @@ export class AppComponent {
         this.last_box_id++;
         break;
       case 'container':
-        this.last_btn_id++;
         element.id = 'container-' + this.last_btn_id.toString();
         new_node = new Container(this.last_btn_id);
         this.renderer['addClass'](element, 'container');
         let new_btn = this.createButton(this.last_btn_id)
         this.renderer.appendChild(element, new_btn);
+        this.last_btn_id++;
         break;
     }
+    
 
     this.storage.addElement(this.storage, parseInt(box_id), new_node);
+    
     main = main.querySelector('#container-' + box_id);
     this.renderer.insertBefore(main, element, add_btn);
     this.hideButtons();
