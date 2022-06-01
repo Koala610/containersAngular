@@ -33,9 +33,7 @@ export class Container extends AbstractFigure{
     }
 
     addElement(node:Container, id:number, element:Box|Container){
-      if(node.items.length === 0){
-        return;
-      }
+      
         
         if(node.id === id){
             node.items.push(element);
