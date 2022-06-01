@@ -15,6 +15,7 @@ export class AppComponent {
   cur_box_id: number = 0;
   storage: Container = new Container(0);
   build_field: string = "";
+  json_format:string = '';
   @ViewChild('main') mainDiv !: ElementRef;
 
   constructor(private renderer: Renderer2) {
@@ -24,20 +25,37 @@ export class AppComponent {
   buildElements() {
     this.last_btn_id = 0;
     this.last_box_id = 0;
+    this.storage = new Container(0);
     let main = this.mainDiv.nativeElement;
     let init_container = main.querySelector('#container-0');
-
-    let parsedData = JSON.parse(this.build_field);
+    this.renderer.removeChild(main, init_container);
+    let modified_field = '';
+    try {
+      modified_field = this.build_field.slice(1, this.build_field.length-1);
+    } catch (error) {
+      
+    }
+    
+    let parsedData = JSON.parse(modified_field);
     let data = this.buildFromData(parsedData, this.storage);
     let main_el = data[0];
     this.storage = data[1];
-    //console.log(this.storage);
+    console.log(this.storage);
     
     
-    this.renderer.removeChild(main, init_container);
+    
     this.renderer.appendChild(main, main_el);
 
 
+  }
+
+  clearContainer(container:any){
+    let childern = container.querySelectorAll('div');
+
+    for (let index = 0; index < childern.length; index++) {
+      this.renderer.removeChild(container, childern[index]);
+      
+    }
   }
 
   deleteIds(node: any) {
@@ -57,12 +75,13 @@ export class AppComponent {
   }
 
   toJSON() {
+    let storage;
+    this.json_format = '';
+    storage = JSON.parse(JSON.stringify(this.storage));
     console.log(this.storage);
-    let storage = JSON.parse(JSON.stringify(this.storage));
-    this.deleteIds(storage);
-    //console.log(this.storage);
     
-    //console.log(JSON.stringify(storage));
+    this.deleteIds(storage);
+    this.json_format = '"'+JSON.stringify(storage)+'"';
 
   }
 
