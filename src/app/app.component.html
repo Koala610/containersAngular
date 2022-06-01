@@ -274,9 +274,11 @@
 </div>
 
 <div>
-  <input type="text" name="" id="" [(ngModel)]="build_field">
+  <textarea rows="5" cols="50" [(ngModel)]="build_field"></textarea>
   <button class="build-btn" (click)="buildElements()">Build</button>
 </div>
 
-<button (click)="toJSON()">To JSON</button>
-<textarea class="json-holder" [(ngModel)]="json_format"></textarea>
+<div>
+  <textarea rows="5" cols="50" class="json-holder" [(ngModel)]="json_format"></textarea>
+  <button (click)="toJSON()">To JSON</button>
+</div>

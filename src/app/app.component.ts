@@ -40,7 +40,6 @@ export class AppComponent {
     let data = this.buildFromData(parsedData, this.storage);
     let main_el = data[0];
     this.storage = data[1];
-    console.log(this.storage);
     
     
     
@@ -78,7 +77,6 @@ export class AppComponent {
     let storage;
     this.json_format = '';
     storage = JSON.parse(JSON.stringify(this.storage));
-    console.log(this.storage);
     
     this.deleteIds(storage);
     this.json_format = '"'+JSON.stringify(storage)+'"';
