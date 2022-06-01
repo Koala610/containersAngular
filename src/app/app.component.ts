@@ -1,6 +1,6 @@
 import { Component, ElementRef, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
 import { Box, Container } from '../models/models';
-import { AppService } from './app.service';
+import { AppService } from './app.service'
 
 @Component({
   selector: 'app-root',
@@ -16,10 +16,10 @@ export class AppComponent {
   cur_box_id: number = 0;
   storage: Container = new Container(0);
   build_field: string = "";
-  json_format:string = '';
+  json_format: string = '';
   @ViewChild('main') mainDiv !: ElementRef;
 
-  constructor(private renderer: Renderer2, private containerService:AppService) {
+  constructor(private renderer: Renderer2, private AppService: AppService) {
 
   }
 
@@ -32,29 +32,29 @@ export class AppComponent {
     this.renderer.removeChild(main, init_container);
     let modified_field = '';
     try {
-      modified_field = this.build_field.slice(1, this.build_field.length-1);
+      modified_field = this.build_field.slice(1, this.build_field.length - 1);
     } catch (error) {
-      
+
     }
-    
+
     let parsedData = JSON.parse(modified_field);
     let data = this.buildFromData(parsedData, this.storage);
     let main_el = data[0];
     this.storage = data[1];
-    
-    
-    
+
+
+
     this.renderer.appendChild(main, main_el);
 
 
   }
 
-  clearContainer(container:any){
+  clearContainer(container: any) {
     let childern = container.querySelectorAll('div');
 
     for (let index = 0; index < childern.length; index++) {
       this.renderer.removeChild(container, childern[index]);
-      
+
     }
   }
 
@@ -78,9 +78,9 @@ export class AppComponent {
     let storage;
     this.json_format = '';
     storage = JSON.parse(JSON.stringify(this.storage));
-    
+
     this.deleteIds(storage);
-    this.json_format = '"'+JSON.stringify(storage)+'"';
+    this.json_format = '"' + JSON.stringify(storage) + '"';
     return this.json_format;
 
   }
@@ -90,7 +90,7 @@ export class AppComponent {
     this.renderer.appendChild(main_el, add_btn);
   }
 
-  buildFromData(node: any, storage:Container=new Container(this.last_btn_id)) {
+  buildFromData(node: any, storage: Container = new Container(this.last_btn_id)) {
     let add_btn = this.createButton(this.last_btn_id);
     let main_el = this.renderer.createElement('div');
     this.renderer.addClass(main_el, node.type);
@@ -102,26 +102,26 @@ export class AppComponent {
     }
     this.last_btn_id++;
     let el: any = null;
-    let new_node:Container|Box;
+    let new_node: Container | Box;
 
     node.items.forEach((item: any) => {
       if (item.type === 'container') {
         let data = this.buildFromData(item);
         el = data[0];
-        
+
         new_node = data[1];
       } else {
         new_node = new Box(this.last_box_id);
-        
+
         new_node.color = item.color;
         el = this.renderer.createElement('div');
         el = this.getFormattedBox(this.last_box_id, el);
         this.renderer.setStyle(el, 'background-color', item.color);
         this.last_box_id++;
       }
-      
+
       storage.items.push(new_node);
-      
+
       this.renderer.insertBefore(main_el, el, add_btn);
     });
 
@@ -253,16 +253,43 @@ export class AppComponent {
         this.last_btn_id++;
         break;
     }
-    
+
 
     this.storage.addElement(this.storage, parseInt(box_id), new_node);
-    
+
     main = main.querySelector('#container-' + box_id);
     this.renderer.insertBefore(main, element, add_btn);
     this.hideButtons();
   }
 
-  sendData(){
-    let data = this.toJSON();
+
+  sendData() {
+    let data: string = this.toJSON();
+    data = data.slice(1, data.length-1)
+    console.log(data);
+    
+    
+    let request: object = {
+      body: data
+    }
+    let base_url = 'http://localhost:3000/api/containers/'
+
+
+    this.AppService.addContainer(request).subscribe((next) =>{
+      console.log(next);
+      
+    });
+    /*let result =  // wrap the fetch in a from if you need an rxjs Observable
+      fetch(
+        base_url,
+        {
+          body: JSON.stringify(request),
+          headers: {
+                'Content-Type': 'application/json',
+              },
+              method: 'POST',
+              mode: 'no-cors'
+            }
+      );*/
   }
 }
