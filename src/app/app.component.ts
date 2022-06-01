@@ -1,5 +1,6 @@
 import { Component, ElementRef, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
 import { Box, Container } from '../models/models';
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent {
   json_format:string = '';
   @ViewChild('main') mainDiv !: ElementRef;
 
-  constructor(private renderer: Renderer2) {
+  constructor(private renderer: Renderer2, private containerService:AppService) {
 
   }
 
@@ -80,6 +81,7 @@ export class AppComponent {
     
     this.deleteIds(storage);
     this.json_format = '"'+JSON.stringify(storage)+'"';
+    return this.json_format;
 
   }
 
@@ -258,5 +260,9 @@ export class AppComponent {
     main = main.querySelector('#container-' + box_id);
     this.renderer.insertBefore(main, element, add_btn);
     this.hideButtons();
+  }
+
+  sendData(){
+    let data = this.toJSON();
   }
 }
