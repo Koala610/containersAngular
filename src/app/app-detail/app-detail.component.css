@@ -1,0 +1,62 @@
+
+.add-btn{
+    margin: 25px 25px;
+}
+
+.box{
+    border: 2px solid black;
+    width: 80px;
+    height: 80px;
+    background-color: red;
+    margin: 20px 20px;
+}
+
+
+.container{
+    border: 2px solid black;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    justify-content: space-around;
+    align-content: center;
+    margin: 10px 20px;
+    min-width: 100px;
+    min-height: 100px;
+
+}
+
+.json-holder{
+    width: auto;
+    margin: auto;
+}
+
+.sub-add-btn.disabled{
+    display: none;
+}
+
+.add-btn-container{
+    background-color: black;
+    width: 80px;
+    height: 80px;
+}
+
+.dropdown-menu{
+    display: flex;
+    justify-content: space-between;
+}
+
+.dropdown-menu.disabled{
+    display: none;
+}
+
+.dropdown-menu button{
+    margin: 10px 10px;
+    width: auto;
+}
+
+
+.color-palette.disabled{
+    display: none;
+}
+
+

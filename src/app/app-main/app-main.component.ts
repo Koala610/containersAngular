@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Box, Container } from 'src/models/models';
 import { AppMainService } from './app-main.service';
 
@@ -18,7 +19,9 @@ export class AppMainComponent {
   json_format: string = '';
   @ViewChild('main') mainDiv !: ElementRef;
 
-  constructor(private renderer: Renderer2, private AppMainService: AppMainService) {
+  constructor(private renderer: Renderer2, 
+    private AppMainService: AppMainService,
+    private router: Router) {
 
   }
 
@@ -274,21 +277,16 @@ export class AppMainComponent {
     let base_url = 'http://localhost:3000/api/containers/'
 
 
-    this.AppMainService.addContainer(request).subscribe((next) =>{
-      console.log(next);
+    this.AppMainService.addContainer(request).subscribe({
+      next: (value) => {
+        console.log(value);
+        
+      },
+      error: (e) => console.log(e),
+      complete: () => this.router.navigate(['/1'])
+      
+      
       
     });
-    /*let result =  // wrap the fetch in a from if you need an rxjs Observable
-      fetch(
-        base_url,
-        {
-          body: JSON.stringify(request),
-          headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-              mode: 'no-cors'
-            }
-      );*/
   }
 }

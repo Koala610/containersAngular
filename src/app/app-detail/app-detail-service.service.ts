@@ -1,22 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 import { AppComponent } from '../app.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppMainService {
+export class AppDetailServiceService {
+  
   BASE_URL = AppComponent.BASE_URL;
 
   constructor(private client : HttpClient) { }
 
-  addContainer(container:object):Observable<object>{
+  getContainer(id:number):Observable<object>{
     let httpOptions = {
       headers: new HttpHeaders()
     }
       httpOptions.headers.append('Access-Control-Allow-Origin', '*');
       httpOptions.headers.append('Content-Type', 'application/json');
-    return this.client.post<object>(this.BASE_URL+'/api/containers/', container, httpOptions)
+    return this.client.get<object>(this.BASE_URL+'/api/containers/'+id.toString(), httpOptions)
   }
 }
