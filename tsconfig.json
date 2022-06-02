@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
@@ -30,29 +29,4 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   }
-=======
-{
-  "compilerOptions": {
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": ["es6", "dom"],
-    "module": "es6",
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-        "*": ["node_modules/*", "app/javascript/*"]
-    },
-    "sourceMap": true,
-    "target": "es5",
-    "noEmit": true
-  },
-  "exclude": [
-    "**/*.spec.ts",
-    "node_modules",
-    "vendor",
-    "public"
-  ],
-  "compileOnSave": false
->>>>>>> 52cfada (First commit)
 }
