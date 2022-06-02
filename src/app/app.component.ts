@@ -10,7 +10,7 @@ import { AppService } from './app.service'
 
 export class AppComponent {
   title = 'Haha';
-  static BASE_URL = 'http://localhost:3000';
+  static BASE_URL = 'https://test-back3.herokuapp.com';
 
   constructor(private renderer: Renderer2, private AppService: AppService) {
 

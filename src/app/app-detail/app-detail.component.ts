@@ -22,16 +22,18 @@ export class AppDetailComponent implements OnInit {
 
   ngOnInit(): void {
     let id:string = this.route.snapshot.paramMap.get('id') || '-1';
-    /*this.AppDetailService.getContainer(parseInt(id)).subscribe({
-      next: (val) => console.log(val),
+    this.AppDetailService.getContainer(parseInt(id)).subscribe({
+      next: (val) => {
+        this.build_field = val.data.body;
+        this.buildElements()
+      },
       error: (err) => console.log(err),
       complete: () => console.log('Done')
       
       
       
-    })*/
-    this.build_field = '"{"items":[{"color":"red","type":"box"},{"id":1,"items":[],"type":"container"}],"type":"container"}"'
-    this.buildElements()
+    })
+    
   }
 
   buildElements() {

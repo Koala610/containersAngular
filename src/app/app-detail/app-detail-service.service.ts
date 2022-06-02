@@ -12,12 +12,12 @@ export class AppDetailServiceService {
 
   constructor(private client : HttpClient) { }
 
-  getContainer(id:number):Observable<object>{
+  getContainer(id:number):Observable<any>{
     let httpOptions = {
       headers: new HttpHeaders()
     }
       httpOptions.headers.append('Access-Control-Allow-Origin', '*');
       httpOptions.headers.append('Content-Type', 'application/json');
-    return this.client.get<object>(this.BASE_URL+'/api/containers/'+id.toString(), httpOptions)
+    return this.client.get<any>(this.BASE_URL+'/api/containers/'+id.toString(), httpOptions)
   }
 }

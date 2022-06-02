@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Box, Container } from 'src/models/models';
+import { AppComponent } from '../app.component';
 import { AppMainService } from './app-main.service';
 
 @Component({
@@ -274,16 +275,17 @@ export class AppMainComponent {
     let request: object = {
       body: data
     }
-    let base_url = 'http://localhost:3000/api/containers/'
+    let base_url = AppComponent.BASE_URL + '/api/containers/'
 
 
     this.AppMainService.addContainer(request).subscribe({
-      next: (value) => {
-        console.log(value);
+      next: (value:any) => {
+        if(value.status === "200"){
+          this.router.navigate(['/'+value.data.id.toString()]);
+        }
         
       },
       error: (e) => console.log(e),
-      complete: () => this.router.navigate(['/1'])
       
       
       
