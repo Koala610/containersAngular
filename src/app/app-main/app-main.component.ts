@@ -27,6 +27,9 @@ export class AppMainComponent {
   }
 
   buildElements() {
+    if(!this.build_field){
+      return;
+    }
     this.last_btn_id = 0;
     this.last_box_id = 0;
     this.storage = new Container(0);

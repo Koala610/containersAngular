@@ -24,6 +24,7 @@ export class AppDetailComponent implements OnInit {
     let id:string = this.route.snapshot.paramMap.get('id') || '-1';
     this.AppDetailService.getContainer(parseInt(id)).subscribe({
       next: (val) => {
+        
         this.build_field = val.data.body;
         this.buildElements()
       },
@@ -39,12 +40,11 @@ export class AppDetailComponent implements OnInit {
   buildElements() {
     this.last_btn_id = 0;
     this.last_box_id = 0;
-    console.log(this.mainDiv);
     
     let main = this.mainDiv.nativeElement;
     let modified_field = '';
     try {
-      modified_field = this.build_field.slice(1, this.build_field.length - 1);
+      modified_field = this.build_field;
     } catch (error) {
 
     }
