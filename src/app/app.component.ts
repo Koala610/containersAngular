@@ -1,5 +1,4 @@
-import { Component, ElementRef, Renderer2, RendererFactory2, ViewChild } from '@angular/core';
-import { Box, Container } from '../models/models';
+import { Component, Renderer2 } from '@angular/core';
 import { AppService } from './app.service'
 
 @Component({
@@ -10,7 +9,7 @@ import { AppService } from './app.service'
 
 export class AppComponent {
   title = 'Haha';
-  static BASE_URL = 'http://localhost:3000';
+  static BASE_URL = 'https://test-back3.herokuapp.com';
 
   constructor(private renderer: Renderer2, private AppService: AppService) {
 
