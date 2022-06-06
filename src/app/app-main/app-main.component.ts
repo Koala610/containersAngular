@@ -33,6 +33,7 @@ export class AppMainComponent {
     this.last_btn_id = 0;
     this.last_box_id = 0;
     this.storage = new Container(0);
+    
     let main = this.mainDiv.nativeElement;
     let init_container = main.querySelector('#container-0');
     this.renderer.removeChild(main, init_container);
@@ -42,15 +43,10 @@ export class AppMainComponent {
     } catch (error) {
 
     }
-
     let parsedData = JSON.parse(modified_field);
     let data = this.buildFromData(parsedData, this.storage);
-    let main_el = data[0];
     this.storage = data[1];
-
-
-
-    this.renderer.appendChild(main, main_el);
+    this.renderer.appendChild(main, data[0]);
 
 
   }
@@ -65,10 +61,10 @@ export class AppMainComponent {
   }
 
   deleteIds(node: any) {
+    delete node.id;
     if (node.items.length === 0) {
       return;
     }
-    delete node.id;
 
     node.items.forEach((item: any) => {
       if (item.type === 'container') {
@@ -91,47 +87,38 @@ export class AppMainComponent {
 
   }
 
-  getFormattedContainer(main_el: any, add_btn: any = this.createButton(this.last_btn_id)) {
-    main_el.id = 'container-' + this.last_btn_id.toString();
-    this.renderer.appendChild(main_el, add_btn);
-  }
-
   buildFromData(node: any, storage: Container = new Container(this.last_btn_id)) {
+    let main = this.renderer.createElement('div');
+    console.log(main);
     let add_btn = this.createButton(this.last_btn_id);
-    let main_el = this.renderer.createElement('div');
-    this.renderer.addClass(main_el, node.type);
-    this.getFormattedContainer(main_el, add_btn);
+    main = this.getFormattedContainer(main, add_btn);
     if (node.items.length === 0) {
       let tmp = new Container(this.last_btn_id);
       this.last_btn_id++;
-      return [main_el, tmp];
+      return [main, tmp];
     }
     this.last_btn_id++;
-    let el: any = null;
-    let new_node: Container | Box;
-
+    let element:any;
+    let new_node!: Container | Box;
     node.items.forEach((item: any) => {
-      if (item.type === 'container') {
-        let data = this.buildFromData(item);
-        el = data[0];
-
-        new_node = data[1];
-      } else {
-        new_node = new Box(this.last_box_id);
-
-        new_node.color = item.color;
-        el = this.renderer.createElement('div');
-        el = this.getFormattedBox(this.last_box_id, el);
-        this.renderer.setStyle(el, 'background-color', item.color);
-        this.last_box_id++;
+      switch (item.type) {
+        case 'box':
+          element = this.renderer.createElement('div');
+          element = this.getFormattedBox(this.last_box_id, element, '#'+item.color);
+          new_node = new Box(this.last_box_id, item.color);
+          this.last_box_id++;
+          break;
+        case 'container':
+          let data = this.buildFromData(item);
+          element = data[0];
+          new_node = data[1];
+          break;
       }
-
       storage.items.push(new_node);
-
-      this.renderer.insertBefore(main_el, el, add_btn);
+      this.renderer.insertBefore(main, element, add_btn);
     });
 
-    return [main_el, storage];
+    return [main, storage];
   }
 
   showButtons(id: number) {
@@ -222,26 +209,38 @@ export class AppMainComponent {
     return new_btn
   }
 
-  getFormattedBox(id: number, element: any) {
+  getFormattedBox(id: number, element: any, color:string='red') {
     this.renderer['addClass'](element, 'box');
+    this.renderer.setStyle(element, 'background-color', color);
     element.id = 'box-' + id.toString();
     this.renderer.listen(element, 'click', event => {
       this.showColorMenu(id);
 
     })
+    
     return element;
   }
 
+  getFormattedContainer(main: any, add_btn: any = this.createButton(this.last_btn_id)) {
+    main.id = 'container-' + this.last_btn_id.toString();
+    this.renderer.appendChild(main, add_btn);
+    this.renderer.addClass(main, 'container');
+    return main
+  }
 
+  getActualContainerID(main:any){
+    let box_btn = main.querySelector('.t-box');
+    let container_id_list = box_btn.id.split('-');
+    let container_id = container_id_list[container_id_list.length - 1]
+    return container_id
+  }
 
 
   addElement(type: string) {
     let main = this.mainDiv.nativeElement;
     let element = this.renderer.createElement('div');
-    let box_btn = main.querySelector('.t-box');
-    let box_id_list = box_btn.id.split('-');
-    let box_id = box_id_list[box_id_list.length - 1]
-    let add_btn = main.querySelector('#add-btn-' + box_id);
+    let conteiner_id = this.getActualContainerID(main);
+    let add_btn = main.querySelector('#add-btn-' + conteiner_id);
     this.hideColorMenu(main, main.querySelector('.color-palette'));
     let new_node!: Box | Container;
     switch (type) {
@@ -251,24 +250,20 @@ export class AppMainComponent {
         this.last_box_id++;
         break;
       case 'container':
-        element.id = 'container-' + this.last_btn_id.toString();
-        new_node = new Container(this.last_btn_id);
-        this.renderer['addClass'](element, 'container');
         let new_btn = this.createButton(this.last_btn_id)
-        this.renderer.appendChild(element, new_btn);
+        element = this.getFormattedContainer(element, new_btn);
+        new_node = new Container(this.last_btn_id);
         this.last_btn_id++;
         break;
     }
-
-
-    this.storage.addElement(this.storage, parseInt(box_id), new_node);
-
-    main = main.querySelector('#container-' + box_id);
+    this.storage.addElement(this.storage, parseInt(conteiner_id), new_node);
+    main = main.querySelector('#container-' + conteiner_id);
     this.renderer.insertBefore(main, element, add_btn);
     this.hideButtons();
   }
 
 
+  
   sendData() {
     let data: string = this.toJSON();
     data = data.slice(1, data.length-1)
@@ -278,7 +273,6 @@ export class AppMainComponent {
     let request: object = {
       body: data
     }
-    let base_url = AppComponent.BASE_URL + '/api/containers/'
 
 
     this.AppMainService.addContainer(request).subscribe({
@@ -289,9 +283,6 @@ export class AppMainComponent {
         
       },
       error: (e) => console.log(e),
-      
-      
-      
     });
   }
 }
